@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLU DIGITAL TOOLS — Master Hub & Offline App Launcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.45); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.8); }
+
+        .hero-mesh {
+            background-image:
+                radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.16) 0px, transparent 50%),
+                radial-gradient(at 85% 10%, rgba(236, 72, 153, 0.14) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(16, 185, 129, 0.10) 0px, transparent 50%);
+        }
+
+        .tool-card {
+            transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-indigo-600 selection:text-white min-h-screen flex flex-col">
+
+    <!-- TOP GLASS NAVIGATION HEADER -->
+    <header class="sticky top-0 z-40 bg-white/85 dark:bg-slate-900/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+            <!-- Brand Identity -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 flex items-center justify-center text-white font-display font-black text-base shadow-lg shadow-indigo-500/30">
+                    SD
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-display font-extrabold text-base sm:text-lg tracking-tight">SOLU DIGITAL TOOLS</span>
+                        <span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Offline & GitHub Ready
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">Enterprise Offline Web Studio & Modular Tool Ecosystem</p>
+                </div>
+            </div>
+
+            <!-- Right Header Actions -->
+            <div class="flex items-center gap-2">
+                <!-- Add Tool / Generate tools.js Button -->
+                <button onclick="openAddToolModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-500/25 transition active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4"/></svg>
+                    <span>Add Tool / tools.js</span>
+                </button>
+
+                <!-- Backup / Restore Menu Button -->
+                <button onclick="openBackupModal()" title="Backup or Import Tools" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                </button>
+
+                <!-- View Density Toggle -->
+                <button onclick="toggleLayoutDensity()" id="densityBtn" title="Switch Grid / Compact List View" class="hidden md:inline-flex p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button onclick="toggleDarkMode()" title="Toggle Light/Dark Theme" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition">
+                    <svg class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg class="w-4 h-4 block dark:hidden text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO COMMAND CENTER -->
+    <section class="hero-mesh border-b border-slate-200/80 dark:border-slate-800/80 py-8 sm:py-10 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+                <div class="max-w-2xl space-y-2.5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-indigo-600 dark:text-indigo-400 shadow-sm">
+                        <span>⚡ Zero-Server Plug & Play Architecture</span>
+                        <span class="text-slate-300 dark:text-slate-700">•</span>
+                        <span id="registrySourceLabel" class="font-mono text-[11px] text-slate-500 dark:text-slate-400">Built-in + tools.js</span>
+                    </div>
+                    <h1 class="font-display font-extrabold text-2xl sm:text-4xl tracking-tight text-slate-900 dark:text-white leading-tight">
+                        All Your Digital Studios in <span class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">One Unified Hub</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Launch any single-file offline application in an instant full-screen workspace or browser tab. Add new tools permanently to your offline folder & GitHub repo via <code class="px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 font-mono text-xs text-indigo-600 dark:text-indigo-300">tools.js</code>.
+                    </p>
+                </div>
+
+                <!-- Live Stats & Global Search -->
+                <div class="w-full lg:w-[440px] space-y-3">
+                    <div class="relative group">
+                        <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <input type="text" id="globalSearchInput" oninput="renderToolsGrid()" placeholder="Search tools, templates, or filenames..." class="w-full pl-10 pr-12 py-3 text-xs sm:text-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition">
+                        <kbd class="hidden sm:inline-block absolute right-3.5 top-1/2 -translate-y-1/2 px-2 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700">/</kbd>
+                    </div>
+
+                    <!-- Mini KPI Strip -->
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 rounded-xl py-2 px-2">
+                            <div id="statTotalTools" class="font-display font-extrabold text-base sm:text-lg text-indigo-600 dark:text-indigo-400">8</div>
+                            <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Active Apps</div>
+                        </div>
+                        <div class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 rounded-xl py-2 px-2">
+                            <div id="statFavoritesCount" class="font-display font-extrabold text-base sm:text-lg text-amber-500">0</div>
+                            <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Pinned Stars</div>
+                        </div>
+                        <div class="bg-white/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 rounded-xl py-2 px-2">
+                            <div class="font-display font-extrabold text-base sm:text-lg text-emerald-500">100%</div>
+                            <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Client-Side</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT WORKSPACE -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+        <!-- RECENTLY LAUNCHED STRIP (AUTO-SHOWN WHEN HISTORY EXISTS) -->
+        <section id="recentToolsSection" class="hidden space-y-2.5">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                    <span>🕒 Recently Launched</span>
+                </h2>
+                <button onclick="clearRecentHistory()" class="text-[11px] text-slate-400 hover:text-rose-500 transition">Clear History</button>
+            </div>
+            <div id="recentToolsStrip" class="flex items-center gap-2.5 overflow-x-auto pb-1"></div>
+        </section>
+
+        <!-- CATEGORY FILTER TABS & SORT BAR -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div id="categoryTabsContainer" class="flex items-center gap-1.5 overflow-x-auto pb-1"></div>
+
+            <div class="flex items-center gap-2 self-end sm:self-auto">
+                <span id="visibleToolsCounter" class="text-xs text-slate-500 dark:text-slate-400 font-medium">Showing 8 apps</span>
+                <select id="sortOrderSelect" onchange="renderToolsGrid()" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold focus:outline-none focus:border-indigo-500">
+                    <option value="default">Sort: Featured Order</option>
+                    <option value="favorites">Sort: Pinned First</option>
+                    <option value="az">Sort: Name (A → Z)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- APPS DIRECTORY GRID -->
+        <div id="toolsDirectoryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- EMPTY SEARCH STATE -->
+        <div id="emptySearchState" class="hidden text-center py-16 px-4 bg-white dark:bg-slate-900/60 border border-dashed border-slate-300 dark:border-slate-800 rounded-2xl">
+            <div class="text-4xl mb-3">🔍</div>
+            <h3 class="text-base font-bold">No matching tools found</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">Try clearing your search filter or add a new tool using the "+ Add Tool / tools.js" button.</p>
+            <button onclick="resetAllFilters()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold">Reset Filters</button>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200/80 dark:border-slate-800/80 bg-white/60 dark:bg-slate-900/40 py-5 px-4 sm:px-6 mt-10">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+            <div class="flex items-center gap-2 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                <span>SOLU DIGITAL TOOLS • Offline & GitHub Ready Architecture</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="openAddToolModal()" class="hover:text-indigo-500 font-semibold transition">+ Generate tools.js</button>
+                <span class="text-slate-300 dark:text-slate-700">|</span>
+                <span>100% Client-Side Single-File Suite</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================
+         MODAL 1: FULL-SCREEN APP WORKSPACE LAUNCHER (DISTRACTION-FREE IFRAME)
+         =================================================================== -->
+    <div id="workspaceModal" class="fixed inset-0 z-50 hidden bg-slate-950 flex flex-col">
+        <!-- Workspace Top Control Bar -->
+        <div class="h-12 bg-slate-900 border-b border-slate-800 px-3 sm:px-5 flex items-center justify-between gap-2 text-white shrink-0">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <button onclick="closeAppWorkspace()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-xs font-bold transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    <span>All Tools</span>
+                </button>
+                <div class="h-4 w-[1px] bg-slate-700"></div>
+                <span id="wsActiveIcon" class="text-base">📄</span>
+                <span id="wsActiveTitle" class="font-bold text-xs sm:text-sm truncate">Tool Name</span>
+                <span id="wsActiveFile" class="hidden md:inline-block px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono text-[10px]">file.html</span>
+            </div>
+
+            <!-- Quick Tool Switcher & Actions -->
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <select id="wsQuickSwitcher" onchange="switchWorkspaceTool(this.value)" class="hidden sm:block max-w-[200px] px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-semibold text-slate-200 focus:outline-none">
+                    <!-- Populated dynamically -->
+                </select>
+
+                <button onclick="reloadWorkspaceIframe()" title="Reload App" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </button>
+
+                <a id="wsOpenNewTabLink" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold transition">
+                    <span>Open Tab ↗</span>
+                </a>
+
+                <button onclick="closeAppWorkspace()" title="Close Workspace (Esc)" class="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-slate-300 hover:text-white transition">
+                    ✕
+                </button>
+            </div>
+        </div>
+
+        <!-- App Iframe Container -->
+        <div class="flex-1 relative bg-white">
+            <iframe id="workspaceIframe" class="w-full h-full border-0 block" title="SOLU App Workspace"></iframe>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         MODAL 2: ADD NEW TOOL / GENERATE tools.js STUDIO
+         =================================================================== -->
+    <div id="addToolModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden my-auto">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/80">
+                <div>
+                    <h2 class="font-display font-extrabold text-base flex items-center gap-2">
+                        <span>➕ Add New Tool & Generate <code class="text-indigo-500 font-mono">tools.js</code></span>
+                    </h2>
+                    <p class="text-[11px] text-slate-500">Works seamlessly on both Local Offline Folders (`file://`) and GitHub Pages</p>
+                </div>
+                <button onclick="closeAddToolModal()" class="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400">✕</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 space-y-4 max-h-[82vh] overflow-y-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+                    <div>
+                        <label class="block font-bold mb-1">Tool Display Name *</label>
+                        <input type="text" id="new_name" oninput="updateGeneratedToolsJSPreview()" placeholder="e.g., GST Billing POS Studio" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">HTML Filename (in same folder) *</label>
+                        <input type="text" id="new_file" oninput="updateGeneratedToolsJSPreview()" placeholder="e.g., gst-billing-pos.html" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">Category</label>
+                        <select id="new_category" onchange="updateGeneratedToolsJSPreview()" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold">
+                            <option value="Design & Print">Design & Print</option>
+                            <option value="Documents & PDF">Documents & PDF</option>
+                            <option value="Media & Audio">Media & Audio</option>
+                            <option value="Web & Dev">Web & Dev</option>
+                            <option value="Business & CSC">Business & CSC</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="block font-bold mb-1">Icon</label>
+                            <input type="text" id="new_icon" oninput="updateGeneratedToolsJSPreview()" value="🚀" class="w-full px-2 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center text-base">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Badge</label>
+                            <input type="text" id="new_badge" oninput="updateGeneratedToolsJSPreview()" value="NEW" class="w-full px-2 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold uppercase">
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Accent</label>
+                            <select id="new_color" onchange="updateGeneratedToolsJSPreview()" class="w-full px-1.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-semibold">
+                                <option value="indigo">Indigo</option>
+                                <option value="emerald">Emerald</option>
+                                <option value="rose">Rose</option>
+                                <option value="amber">Amber</option>
+                                <option value="cyan">Cyan</option>
+                                <option value="violet">Violet</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block font-bold mb-1">Short Description & Features</label>
+                        <input type="text" id="new_desc" oninput="updateGeneratedToolsJSPreview()" placeholder="e.g., Fast 58mm/80mm thermal receipt & GST invoice generator with UPI QR." class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block font-bold mb-1">Search Tags (comma separated)</label>
+                        <input type="text" id="new_tags" oninput="updateGeneratedToolsJSPreview()" placeholder="e.g., invoice, pos, thermal, bill, shop, upi" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-mono">
+                    </div>
+                </div>
+
+                <!-- Optional: Import Self-Contained HTML File Directly into Browser Storage -->
+                <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div>
+                        <div class="font-bold text-indigo-600 dark:text-indigo-300">📦 Optional: Embed Standalone .HTML File Directly</div>
+                        <div class="text-[11px] text-slate-500">Embeds the entire HTML file inside browser storage so it launches even without a folder path</div>
+                    </div>
+                    <label class="cursor-pointer px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition">
+                        <span id="embeddedFileStatus">Select .HTML File</span>
+                        <input type="file" accept=".html,.htm" class="hidden" onchange="handleEmbedHtmlFile(event)">
+                    </label>
+                </div>
+
+                <!-- Instant Browser Save Button -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="saveNewToolToBrowser()" class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold shadow transition">
+                        ⚡ Save Instantly to Browser Hub
+                    </button>
+                </div>
+
+                <!-- Live Generated tools.js Code Box -->
+                <div class="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200">📄 Permanent GitHub & Offline Registry (<code class="text-indigo-500">tools.js</code>)</span>
+                        <div class="flex gap-2">
+                            <button onclick="copyOneLineEntry()" class="px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-slate-800 hover:bg-indigo-600 hover:text-white text-[11px] font-bold transition">📋 Copy 1-Line Entry</button>
+                            <button onclick="downloadUpdatedToolsJS()" class="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold shadow transition">⬇️ Download Full tools.js</button>
+                        </div>
+                    </div>
+                    <pre id="generatedToolsJSCode" class="p-3 rounded-xl bg-slate-950 text-emerald-300 font-mono text-[11px] leading-relaxed overflow-x-auto max-h-44 border border-slate-800"></pre>
+                    <p class="text-[11px] text-slate-500">
+                        💡 <strong>Tip:</strong> Put the downloaded <code class="font-mono">tools.js</code> in the same folder as <code class="font-mono">index.html</code> (and push to GitHub). Whenever you update <code class="font-mono">tools.js</code>, all devices automatically see your new tools!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         MODAL 3: BACKUP, RESTORE & CUSTOM TOOLS MANAGER
+         =================================================================== -->
+    <div id="backupModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <h2 class="font-display font-extrabold text-base">⚙️ Manage Registry & JSON Backups</h2>
+                <button onclick="closeBackupModal()" class="p-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400">✕</button>
+            </div>
+            <div class="p-5 space-y-4 text-xs">
+                <div class="grid grid-cols-2 gap-2.5">
+                    <button onclick="downloadUpdatedToolsJS()" class="p-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-center shadow transition">
+                        ⬇️ Download tools.js
+                    </button>
+                    <button onclick="exportCustomToolsJSON()" class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold border border-slate-200 dark:border-slate-700 transition">
+                        💾 Export Backup (.JSON)
+                    </button>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold">Restore Backup (.JSON)</div>
+                        <div class="text-[11px] text-slate-500">Import previously saved custom tools & favorites</div>
+                    </div>
+                    <label class="cursor-pointer px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold">
+                        <span>📂 Import JSON</span>
+                        <input type="file" accept=".json" class="hidden" onchange="importCustomToolsJSON(event)">
+                    </label>
+                </div>
+
+                <div id="customToolsManagerList" class="space-y-2 max-h-48 overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="portalToast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white border border-indigo-500/40 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-bold">
+        <span id="toastIcon">✅</span>
+        <span id="toastText">Ready</span>
+    </div>
+
+    <!-- EXTERNAL PLUG & PLAY REGISTRY (LOADS AUTOMATICALLY IF PRESENT IN SAME FOLDER / GITHUB) -->
+    <script src="tools.js"></script>
+
+    <!-- MAIN PORTAL APPLICATION ENGINE -->
+    <script>
+        /********************************************************************
+         * 1. BUILT-IN DEFAULT 8 SOLU TOOLS + EXTERNAL tools.js MERGER
+         ********************************************************************/
+        const DEFAULT_SOLU_TOOLS = [
+            {
+                id: 'resume-builder',
+                name: 'Resume Builder Pro',
+                file: 'resume.html',
+                category: 'Documents & PDF',
+                icon: '📄',
+                badge: '120 TEMPLATES',
+                color: 'indigo',
+                desc: 'ATS-friendly executive CV & biodata studio with 120 templates, live preview, and instant PDF export.',
+                tags: ['cv', 'biodata', 'job', 'career', 'pdf', '120']
+            },
+            {
+                id: 'photo-studio',
+                name: 'Photo Studio Pro',
+                file: 'photo-studio.html',
+                category: 'Media & Audio',
+                icon: '📸',
+                badge: 'PRO EDITOR',
+                color: 'rose',
+                desc: 'Passport photo sheet maker, filters, color grading, cropping, and instant studio print layouts.',
+                tags: ['image', 'passport', 'crop', 'filter', 'camera', 'edit']
+            },
+            {
+                id: 'qr-mega-studio',
+                name: 'QR Mega Studio',
+                file: 'qr-studio.html',
+                category: 'Business & CSC',
+                icon: '📱',
+                badge: 'UPI & VCARD',
+                color: 'emerald',
+                desc: 'Generate custom colored QR codes with logos for UPI payments, Wi-Fi, vCards, WhatsApp, and links.',
+                tags: ['barcode', 'upi', 'payment', 'scan', 'vcard', 'wifi']
+            },
+            {
+                id: 'audio-tools',
+                name: 'Audio Tools Studio',
+                file: 'audio-tools.html',
+                category: 'Media & Audio',
+                icon: '🎧',
+                badge: '100% OFFLINE',
+                color: 'cyan',
+                desc: 'Client-side MP3/WAV cutter, voice recorder, speed/pitch changer, and waveform visualizer.',
+                tags: ['mp3', 'wav', 'sound', 'music', 'cutter', 'recorder']
+            },
+            {
+                id: 'id-pvc-card',
+                name: 'ID & PVC Card Studio Pro',
+                file: 'id-card.html',
+                category: 'Design & Print',
+                icon: '🪪',
+                badge: '200+ TEMPLATES',
+                color: 'violet',
+                desc: 'Dual-side CR80 PVC ID cards with 200+ templates, live signature pad, QR/barcode, and A4 batch print.',
+                tags: ['pvc', 'employee', 'student', 'school', 'badge', '200']
+            },
+            {
+                id: 'certificate-maker',
+                name: 'Certificate & Award Maker Pro',
+                file: 'certificate.html',
+                category: 'Design & Print',
+                icon: '🏆',
+                badge: '150+ TEMPLATES',
+                color: 'amber',
+                desc: '300-DPI A4 certificates with foil seals, dual signatures, verification QR, and bulk CSV generation.',
+                tags: ['award', 'diploma', 'school', 'academy', 'csv', '150']
+            },
+            {
+                id: 'website-builder',
+                name: 'Solu Website Builder Pro',
+                file: 'website-builder.html',
+                category: 'Web & Dev',
+                icon: '🌐',
+                badge: 'DRAG & DROP',
+                color: 'indigo',
+                desc: 'Visual no-code drag-and-drop website creator with responsive viewports and clean single-file HTML export.',
+                tags: ['html', 'css', 'nocode', 'landing', 'builder', 'export']
+            },
+            {
+                id: 'invitation-studio',
+                name: 'Wedding & Invitation Studio Pro',
+                file: 'invitation.html',
+                category: 'Design & Print',
+                icon: '💌',
+                badge: '150+ CARDS',
+                color: 'rose',
+                desc: 'Royal wedding, birthday & festival cards in Hindi, Gujarati & English with venue QR and A4 print sheets.',
+                tags: ['wedding', 'vivah', 'birthday', 'greeting', 'hindi', 'gujarati']
+            }
+        ];
+
+        const STORAGE_KEYS = {
+            FAVORITES: 'solu_hub_favorites_v1',
+            RECENT: 'solu_hub_recent_v1',
+            CUSTOM_TOOLS: 'solu_hub_custom_tools_v1',
+            THEME: 'solu_hub_theme_v1'
+        };
+
+        const COLOR_STYLES = {
+            indigo: { bg: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20', badge: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-300', btn: 'bg-indigo-600 hover:bg-indigo-500' },
+            emerald: { bg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20', badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300', btn: 'bg-emerald-600 hover:bg-emerald-500' },
+            rose: { bg: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20', badge: 'bg-rose-500/10 text-rose-600 dark:text-rose-300', btn: 'bg-rose-600 hover:bg-rose-500' },
+            amber: { bg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20', badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-300', btn: 'bg-amber-600 hover:bg-amber-500' },
+            cyan: { bg: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20', badge: 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-300', btn: 'bg-cyan-600 hover:bg-cyan-500' },
+            violet: { bg: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20', badge: 'bg-violet-500/10 text-violet-600 dark:text-violet-300', btn: 'bg-violet-600 hover:bg-violet-500' }
+        };
+
+        const hubState = {
+            activeCategory: 'All Tools',
+            compactView: false,
+            favorites: [],
+            recentIds: [],
+            customTools: [],
+            pendingEmbeddedHTML: null
+        };
+
+        // Merge Built-in Defaults + External tools.js (window.SOLU_TOOLS_REGISTRY) + Browser Custom Tools
+        function getAllMergedTools() {
+            const map = new Map();
+            DEFAULT_SOLU_TOOLS.forEach(t => map.set(t.id || t.file, { ...t, source: 'builtin' }));
+
+            if (Array.isArray(window.SOLU_TOOLS_REGISTRY)) {
+                window.SOLU_TOOLS_REGISTRY.forEach(t => {
+                    const key = t.id || t.file;
+                    map.set(key, {
+                        id: key,
+                        name: t.name || 'Untitled Tool',
+                        file: t.file || '#',
+                        category: t.category || 'Business & CSC',
+                        icon: t.icon || '🛠️',
+                        badge: t.badge || 'TOOL',
+                        color: t.color || 'indigo',
+                        desc: t.desc || '100% Offline Single-File Web Application',
+                        tags: Array.isArray(t.tags) ? t.tags : [],
+                        source: 'tools.js'
+                    });
+                });
+            }
+
+            hubState.customTools.forEach(t => {
+                const key = t.id || t.file;
+                map.set(key, { ...t, source: 'browser' });
+            });
+
+            return Array.from(map.values());
+        }
+
+        /********************************************************************
+         * 2. RENDER CATEGORIES, RECENT STRIP & TOOLS DIRECTORY GRID
+         ********************************************************************/
+        function renderCategoryPills() {
+            const allTools = getAllMergedTools();
+            const categories = ['All Tools', 'Favorites', 'Design & Print', 'Documents & PDF', 'Media & Audio', 'Web & Dev', 'Business & CSC'];
+            const container = document.getElementById('categoryTabsContainer');
+
+            container.innerHTML = categories.map(cat => {
+                let count = allTools.length;
+                if (cat === 'Favorites') count = allTools.filter(t => hubState.favorites.includes(t.id)).length;
+                else if (cat !== 'All Tools') count = allTools.filter(t => t.category === cat).length;
+
+                const isActive = hubState.activeCategory === cat;
+                return `
+                    <button onclick="setCategory('${cat}')" class="shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${isActive ? 'bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-500/20' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-indigo-400'}">
+                        <span>${cat === 'Favorites' ? '⭐ ' + cat : cat}</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isActive ? 'bg-black/25 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'}">${count}</span>
+                    </button>`;
+            }).join('');
+        }
+
+        function setCategory(cat) {
+            hubState.activeCategory = cat;
+            renderCategoryPills();
+            renderToolsGrid();
+        }
+
+        function renderRecentStrip() {
+            const allTools = getAllMergedTools();
+            const recentTools = hubState.recentIds
+                .map(id => allTools.find(t => t.id === id))
+                .filter(Boolean);
+
+            const sec = document.getElementById('recentToolsSection');
+            const strip = document.getElementById('recentToolsStrip');
+            if (recentTools.length === 0) {
+                sec.classList.add('hidden');
+                return;
+            }
+            sec.classList.remove('hidden');
+            strip.innerHTML = recentTools.map(t => `
+                <button onclick="launchToolInWorkspace('${t.id}')" class="shrink-0 inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 text-xs font-bold shadow-sm transition">
+                    <span>${t.icon}</span>
+                    <span>${escapeHTML(t.name)}</span>
+                    <span class="text-[10px] text-indigo-500">Launch →</span>
+                </button>
+            `).join('');
+        }
+
+        function renderToolsGrid() {
+            const allTools = getAllMergedTools();
+            const query = (document.getElementById('globalSearchInput')?.value || '').toLowerCase().trim();
+            const sortBy = document.getElementById('sortOrderSelect')?.value || 'default';
+
+            document.getElementById('statTotalTools').textContent = allTools.length;
+            document.getElementById('statFavoritesCount').textContent = hubState.favorites.length;
+
+            let filtered = allTools.filter(t => {
+                if (hubState.activeCategory === 'Favorites' && !hubState.favorites.includes(t.id)) return false;
+                if (hubState.activeCategory !== 'All Tools' && hubState.activeCategory !== 'Favorites' && t.category !== hubState.activeCategory) return false;
+                if (!query) return true;
+                const hay = `${t.name} ${t.desc} ${t.file} ${t.category} ${(t.tags || []).join(' ')}`.toLowerCase();
+                return hay.includes(query);
+            });
+
+            if (sortBy === 'favorites') {
+                filtered.sort((a, b) => Number(hubState.favorites.includes(b.id)) - Number(hubState.favorites.includes(a.id)));
+            } else if (sortBy === 'az') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            document.getElementById('visibleToolsCounter').textContent = `Showing ${filtered.length} of ${allTools.length} apps`;
+
+            const grid = document.getElementById('toolsDirectoryGrid');
+            const emptyBox = document.getElementById('emptySearchState');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyBox.classList.remove('hidden');
+                return;
+            }
+            emptyBox.classList.add('hidden');
+
+            grid.className = hubState.compactView
+                ? 'grid grid-cols-1 md:grid-cols-2 gap-3'
+                : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5';
+
+            grid.innerHTML = filtered.map(tool => {
+                const c = COLOR_STYLES[tool.color] || COLOR_STYLES.indigo;
+                const isFav = hubState.favorites.includes(tool.id);
+                const hrefAttr = tool.embeddedHTML ? '#' : escapeHTML(tool.file);
+                const newTabClick = tool.embeddedHTML
+                    ? `onclick="event.preventDefault();openEmbeddedInNewTab('${tool.id}')"`
+                    : `onclick="recordRecentTool('${tool.id}')"`;
+
+                return `
+                    <article class="tool-card bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-slate-800 hover:border-indigo-500/60 dark:hover:border-indigo-500/60 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 relative group">
+                        <div>
+                            <!-- Card Top Row: Icon + Badges + Pin Star -->
+                            <div class="flex items-start justify-between gap-2 mb-4">
+                                <div class="w-12 h-12 rounded-2xl ${c.bg} border flex items-center justify-center text-2xl shadow-inner">
+                                    ${tool.icon}
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider ${c.badge}">
+                                        ${escapeHTML(tool.badge)}
+                                    </span>
+                                    <button onclick="toggleFavoriteTool('${tool.id}')" title="${isFav ? 'Unpin Favorite' : 'Pin to Favorites'}" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition text-sm">
+                                        ${isFav ? '⭐' : '<span class="opacity-40 group-hover:opacity-90">☆</span>'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Title & Category -->
+                            <div class="mb-1.5">
+                                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">${escapeHTML(tool.category)}</div>
+                                <h3 class="font-display font-extrabold text-base text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
+                                    ${escapeHTML(tool.name)}
+                                </h3>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4 line-clamp-3">
+                                ${escapeHTML(tool.desc)}
+                            </p>
+                        </div>
+
+                        <!-- Card Bottom: Filename Tag & Dual Launch Buttons -->
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 space-y-2.5">
+                            <div class="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                                <span class="truncate max-w-[170px]">📄 ${escapeHTML(tool.file)}</span>
+                                <span class="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">${tool.embeddedHTML ? 'embedded' : tool.source}</span>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="launchToolInWorkspace('${tool.id}')" class="col-span-2 py-2 px-3 rounded-xl ${c.btn} text-white text-xs font-bold shadow-sm transition active:scale-95 flex items-center justify-center gap-1.5">
+                                    <span>Launch App</span>
+                                </button>
+                                <a href="${hrefAttr}" target="_blank" rel="noopener" ${newTabClick} title="Open in New Browser Tab" class="py-2 px-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold text-center border border-slate-200 dark:border-slate-700 transition">
+                                    Tab ↗
+                                </a>
+                            </div>
+                        </div>
+                    </article>`;
+            }).join('');
+        }
+
+        /********************************************************************
+         * 3. FULL-SCREEN APP WORKSPACE LAUNCHER (IFRAME MODAL)
+         ********************************************************************/
+        function launchToolInWorkspace(toolId) {
+            const allTools = getAllMergedTools();
+            const tool = allTools.find(t => t.id === toolId);
+            if (!tool) return;
+
+            recordRecentTool(tool.id);
+
+            document.getElementById('wsActiveIcon').textContent = tool.icon;
+            document.getElementById('wsActiveTitle').textContent = tool.name;
+            document.getElementById('wsActiveFile').textContent = tool.file;
+
+            const switcher = document.getElementById('wsQuickSwitcher');
+            switcher.innerHTML = allTools.map(t => `<option value="${t.id}" ${t.id === tool.id ? 'selected' : ''}>${t.icon} ${escapeHTML(t.name)}</option>`).join('');
+
+            const iframe = document.getElementById('workspaceIframe');
+            const newTabLink = document.getElementById('wsOpenNewTabLink');
+
+            if (tool.embeddedHTML) {
+                iframe.removeAttribute('src');
+                iframe.srcdoc = tool.embeddedHTML;
+                newTabLink.href = '#';
+                newTabLink.onclick = (e) => { e.preventDefault(); openEmbeddedInNewTab(tool.id); };
+            } else {
+                iframe.removeAttribute('srcdoc');
+                iframe.src = tool.file;
+                newTabLink.href = tool.file;
+                newTabLink.onclick = null;
+            }
+
+            document.getElementById('workspaceModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function switchWorkspaceTool(newToolId) {
+            launchToolInWorkspace(newToolId);
+        }
+
+        function reloadWorkspaceIframe() {
+            const iframe = document.getElementById('workspaceIframe');
+            if (iframe.srcdoc) {
+                const tmp = iframe.srcdoc;
+                iframe.srcdoc = '';
+                setTimeout(() => { iframe.srcdoc = tmp; }, 50);
+            } else if (iframe.src) {
+                iframe.src = iframe.src;
+            }
+        }
+
+        function closeAppWorkspace() {
+            const iframe = document.getElementById('workspaceIframe');
+            iframe.src = 'about:blank';
+            iframe.removeAttribute('srcdoc');
+            document.getElementById('workspaceModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function openEmbeddedInNewTab(toolId) {
+            const tool = getAllMergedTools().find(t => t.id === toolId);
+            if (!tool || !tool.embeddedHTML) return;
+            const win = window.open('', '_blank');
+            if (win) {
+                win.document.open();
+                win.document.write(tool.embeddedHTML);
+                win.document.close();
+            }
+        }
+
+        /********************************************************************
+         * 4. ADD NEW TOOL & PERMANENT tools.js CODE GENERATOR
+         ********************************************************************/
+        function openAddToolModal() {
+            hubState.pendingEmbeddedHTML = null;
+            document.getElementById('embeddedFileStatus').textContent = 'Select .HTML File';
+            updateGeneratedToolsJSPreview();
+            document.getElementById('addToolModal').classList.remove('hidden');
+        }
+
+        function closeAddToolModal() {
+            document.getElementById('addToolModal').classList.add('hidden');
+        }
+
+        function buildDraftToolObject() {
+            const name = (document.getElementById('new_name').value || '').trim() || 'New Solu Studio Tool';
+            const file = (document.getElementById('new_file').value || '').trim() || 'new-tool.html';
+            const category = document.getElementById('new_category').value || 'Business & CSC';
+            const icon = (document.getElementById('new_icon').value || '').trim() || '🚀';
+            const badge = (document.getElementById('new_badge').value || '').trim() || 'NEW';
+            const color = document.getElementById('new_color').value || 'indigo';
+            const desc = (document.getElementById('new_desc').value || '').trim() || '100% Offline Single-File Web Application';
+            const rawTags = (document.getElementById('new_tags').value || '').split(',').map(s => s.trim()).filter(Boolean);
+            const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'custom-tool';
+
+            return {
+                id: slug,
+                name,
+                file,
+                category,
+                icon,
+                badge,
+                color,
+                desc,
+                tags: rawTags.length ? rawTags : [slug]
+            };
+        }
+
+        function buildCompleteToolsJSContent(includeDraft = true) {
+            const currentTools = getAllMergedTools().map(({ source, embeddedHTML, ...clean }) => clean);
+            const draft = buildDraftToolObject();
+            const hasUserTyped = (document.getElementById('new_name').value || '').trim().length > 0;
+
+            if (includeDraft && hasUserTyped) {
+                const idx = currentTools.findIndex(t => t.id === draft.id || t.file === draft.file);
+                if (idx >= 0) currentTools[idx] = draft;
+                else currentTools.push(draft);
+            }
+
+            return `// SOLU DIGITAL TOOLS — Plug & Play Registry (Offline & GitHub Ready)\n// Place this file in the exact same folder as index.html\nwindow.SOLU_TOOLS_REGISTRY = ${JSON.stringify(currentTools, null, 2)};\n`;
+        }
+
+        function updateGeneratedToolsJSPreview() {
+            document.getElementById('generatedToolsJSCode').textContent = buildCompleteToolsJSContent(true);
+        }
+
+        function copyOneLineEntry() {
+            const draft = buildDraftToolObject();
+            const line = `  ${JSON.stringify(draft)},`;
+            const ta = document.createElement('textarea');
+            ta.value = line;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showPortalToast('📋 Copied 1-Line Tool Object for tools.js!');
+        }
+
+        function downloadUpdatedToolsJS() {
+            const content = buildCompleteToolsJSContent(true);
+            const blob = new Blob([content], { type: 'application/javascript;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tools.js';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showPortalToast('⬇️ Downloaded updated tools.js! Save it next to index.html.');
+        }
+
+        function handleEmbedHtmlFile(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                hubState.pendingEmbeddedHTML = e.target.result;
+                if (!document.getElementById('new_file').value) {
+                    document.getElementById('new_file').value = file.name;
+                }
+                if (!document.getElementById('new_name').value) {
+                    document.getElementById('new_name').value = file.name.replace(/\.html?$/i, '').replace(/[-_]/g, ' ');
+                }
+                document.getElementById('embeddedFileStatus').textContent = `✅ ${file.name}`;
+                updateGeneratedToolsJSPreview();
+                showPortalToast(`📦 Loaded "${file.name}" for instant embedding!`);
+            };
+            reader.readAsText(file);
+        }
+
+        function saveNewToolToBrowser() {
+            const draft = buildDraftToolObject();
+            if (hubState.pendingEmbeddedHTML) {
+                draft.embeddedHTML = hubState.pendingEmbeddedHTML;
+            }
+            const existingIdx = hubState.customTools.findIndex(t => t.id === draft.id);
+            if (existingIdx >= 0) hubState.customTools[existingIdx] = draft;
+            else hubState.customTools.push(draft);
+
+            persistHubStorage();
+            renderCategoryPills();
+            renderToolsGrid();
+            closeAddToolModal();
+            showPortalToast(`⚡ Added "${draft.name}" to Master Hub!`);
+        }
+
+        /********************************************************************
+         * 5. FAVORITES, RECENT HISTORY, BACKUPS & UTILITIES
+         ********************************************************************/
+        function toggleFavoriteTool(id) {
+            const idx = hubState.favorites.indexOf(id);
+            if (idx >= 0) {
+                hubState.favorites.splice(idx, 1);
+                showPortalToast('Removed from Favorites');
+            } else {
+                hubState.favorites.push(id);
+                showPortalToast('⭐ Pinned to Favorites!');
+            }
+            persistHubStorage();
+            renderCategoryPills();
+            renderToolsGrid();
+        }
+
+        function recordRecentTool(id) {
+            hubState.recentIds = [id, ...hubState.recentIds.filter(x => x !== id)].slice(0, 6);
+            persistHubStorage();
+            renderRecentStrip();
+        }
+
+        function clearRecentHistory() {
+            hubState.recentIds = [];
+            persistHubStorage();
+            renderRecentStrip();
+        }
+
+        function openBackupModal() {
+            renderCustomToolsManager();
+            document.getElementById('backupModal').classList.remove('hidden');
+        }
+
+        function closeBackupModal() {
+            document.getElementById('backupModal').classList.add('hidden');
+        }
+
+        function renderCustomToolsManager() {
+            const box = document.getElementById('customToolsManagerList');
+            if (hubState.customTools.length === 0) {
+                box.innerHTML = `<div class="text-center py-4 text-slate-400">No browser-saved custom tools yet.</div>`;
+                return;
+            }
+            box.innerHTML = `
+                <div class="font-bold text-slate-400 uppercase text-[10px]">Browser-Saved Custom Tools (${hubState.customTools.length})</div>
+                ${hubState.customTools.map((t, i) => `
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800">
+                        <span class="font-bold">${t.icon} ${escapeHTML(t.name)} <span class="font-mono text-[10px] text-slate-400">(${escapeHTML(t.file)})</span></span>
+                        <button onclick="deleteBrowserCustomTool(${i})" class="px-2 py-1 rounded bg-rose-500/15 text-rose-500 hover:bg-rose-600 hover:text-white font-bold">Delete</button>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function deleteBrowserCustomTool(idx) {
+            hubState.customTools.splice(idx, 1);
+            persistHubStorage();
+            renderCustomToolsManager();
+            renderCategoryPills();
+            renderToolsGrid();
+            showPortalToast('Deleted custom browser tool');
+        }
+
+        function exportCustomToolsJSON() {
+            const payload = {
+                favorites: hubState.favorites,
+                customTools: hubState.customTools
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `SOLU_Hub_Backup_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showPortalToast('💾 Exported Hub JSON Backup!');
+        }
+
+        function importCustomToolsJSON(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data.favorites)) hubState.favorites = data.favorites;
+                    if (Array.isArray(data.customTools)) hubState.customTools = data.customTools;
+                    persistHubStorage();
+                    renderCustomToolsManager();
+                    renderCategoryPills();
+                    renderToolsGrid();
+                    showPortalToast('✅ Restored Hub Backup Successfully!');
+                } catch (err) {
+                    showPortalToast('❌ Invalid JSON Backup File', '⚠️');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function persistHubStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(hubState.favorites));
+                localStorage.setItem(STORAGE_KEYS.RECENT, JSON.stringify(hubState.recentIds));
+                localStorage.setItem(STORAGE_KEYS.CUSTOM_TOOLS, JSON.stringify(hubState.customTools));
+            } catch (e) {}
+        }
+
+        function loadHubStorage() {
+            try {
+                const favs = JSON.parse(localStorage.getItem(STORAGE_KEYS.FAVORITES) || '[]');
+                const rec = JSON.parse(localStorage.getItem(STORAGE_KEYS.RECENT) || '[]');
+                const cust = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOM_TOOLS) || '[]');
+                if (Array.isArray(favs)) hubState.favorites = favs;
+                if (Array.isArray(rec)) hubState.recentIds = rec;
+                if (Array.isArray(cust)) hubState.customTools = cust;
+            } catch (e) {}
+        }
+
+        function resetAllFilters() {
+            document.getElementById('globalSearchInput').value = '';
+            setCategory('All Tools');
+        }
+
+        function toggleLayoutDensity() {
+            hubState.compactView = !hubState.compactView;
+            renderToolsGrid();
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem(STORAGE_KEYS.THEME, document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        function escapeHTML(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        let toastTimer = null;
+        function showPortalToast(msg, icon = '✅') {
+            const box = document.getElementById('portalToast');
+            document.getElementById('toastText').textContent = msg;
+            document.getElementById('toastIcon').textContent = icon;
+            box.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                box.classList.add('translate-y-20', 'opacity-0');
+            }, 2800);
+        }
+
+        // Keyboard shortcuts: '/' focuses search, 'Escape' closes modals
+        window.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                document.getElementById('globalSearchInput').focus();
+            } else if (e.key === 'Escape') {
+                closeAddToolModal();
+                closeBackupModal();
+                if (!document.getElementById('workspaceModal').classList.contains('hidden')) {
+                    closeAppWorkspace();
+                }
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem(STORAGE_KEYS.THEME) === 'light') {
+                document.documentElement.classList.remove('dark');
+            }
+            loadHubStorage();
+
+            if (Array.isArray(window.SOLU_TOOLS_REGISTRY)) {
+                document.getElementById('registrySourceLabel').textContent = `tools.js Active (${window.SOLU_TOOLS_REGISTRY.length} tools)`;
+            }
+
+            renderCategoryPills();
+            renderRecentStrip();
+            renderToolsGrid();
+        });
+    </script>
+</body>
+</html>
